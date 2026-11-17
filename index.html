@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ô Ăn Quà – SSI</title>
+<meta name="description" content="Ô Ăn Quà của SSI: mỗi ngày lật một ô, chinh phục thử thách để nhận quà, từ 1/12 đến 25/12/2026.">
+<meta property="og:title" content="Ô Ăn Quà – SSI">
+<meta property="og:image" content="assets/kv.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<style>
+body{margin:0}
+a{color:#8E0E15}a:hover{color:#5E090E}
+.wrap{width:100%;max-width:1400px;margin:0 auto;padding:0 24px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 28px;border-radius:999px;border:0;font-family:inherit;font-weight:800;font-size:17px;text-decoration:none;box-sizing:border-box;cursor:pointer}
+.btn-gold{background:linear-gradient(180deg,#FFE08A 0%,#FFC94D 100%);color:#6B0B10;box-shadow:0 5px 0 #C4801A,0 14px 30px rgba(90,0,6,.45)}
+.btn-gold:hover{background:#FFE9A8;color:#6B0B10}
+.btn-red{background:linear-gradient(180deg,#E5281F 0%,#C4141B 100%);color:#FFFFFF;box-shadow:0 4px 0 #8E0E15}
+.btn-red:hover{background:#D81E1E;color:#FFFFFF}
+.btn:focus-visible,.cell:focus-visible,.quan:focus-visible,.plain:focus-visible{outline:3px solid #FFFFFF;outline-offset:3px}
+.kv-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:30% 50%}
+@media(min-width:720px){.kv-img{object-position:50% 50%}}
+.play{min-height:68px;padding:0 44px;font-size:24px;font-weight:900;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes screenIn{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes cardIn{0%{opacity:0;transform:perspective(1000px) rotateY(100deg) scale(.5)}70%{opacity:1;transform:perspective(1000px) rotateY(-8deg) scale(1.03)}100%{opacity:1;transform:none}}
+.screen-in{animation:screenIn .5s ease-out both}
+.board-frame{border-radius:36px;padding:14px}
+.board{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);grid-template-areas:"a" "q12" "b" "q25"}
+.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cell{height:118px}
+.quan{padding:16px;border-radius:26px;min-height:130px;flex-direction:row;gap:18px;transition:transform .2s}
+.quan:hover{transform:scale(1.03)}
+.quan-pts{font-size:42px}
+@media(min-width:1024px){
+.board-frame{border-radius:196px;padding:20px}
+.board{gap:14px;grid-template-columns:178px minmax(0,1fr) 178px;grid-template-areas:"q25 a q12" "q25 b q12"}
+.row{grid-template-columns:repeat(9,minmax(0,1fr));gap:8px}
+.row-b{direction:rtl}.row-b>*{direction:ltr}
+.cell{height:164px}
+.quan{flex-direction:column;gap:10px}
+.quan-l{border-radius:92% 14px 14px 92%/50% 14px 14px 50%;padding:16px 12px 16px 30px}
+.quan-r{border-radius:14px 92% 92% 14px/14px 50% 50% 14px;padding:16px 30px 16px 12px}
+.quan-pts{font-size:42px}
+}
+.cell{display:block;padding:0;border:0;background:none;cursor:pointer;perspective:800px;font-family:inherit;border-radius:14px;transition:transform .2s}
+.cell:hover{transform:translateY(-5px)}
+.cell-inner{position:relative;display:block;width:100%;height:100%;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.cell-inner.is-open{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-sizing:border-box;padding:12px 8px;overflow:hidden}
+.face-front{background:linear-gradient(180deg,#EA2E20 0%,#CB141A 100%);border:1.5px solid #FFD678;color:#FFF1D0;box-shadow:0 6px 14px rgba(90,0,6,.35)}
+.face-front::before,.gift-card::before{content:"";position:absolute;inset:6px;border:1px solid rgba(255,214,120,.8);border-radius:8px;pointer-events:none}
+.face-front::after{content:"";position:absolute;inset:3px;pointer-events:none;background:
+linear-gradient(#D5181B,#D5181B) 2px 2px/4px 4px no-repeat,
+linear-gradient(#D5181B,#D5181B) calc(100% - 2px) 2px/4px 4px no-repeat,
+linear-gradient(#D5181B,#D5181B) 2px calc(100% - 2px)/4px 4px no-repeat,
+linear-gradient(#D5181B,#D5181B) calc(100% - 2px) calc(100% - 2px)/4px 4px no-repeat,
+linear-gradient(#FFD678,#FFD678) 0 0/8px 8px no-repeat,
+linear-gradient(#FFD678,#FFD678) 100% 0/8px 8px no-repeat,
+linear-gradient(#FFD678,#FFD678) 0 100%/8px 8px no-repeat,
+linear-gradient(#FFD678,#FFD678) 100% 100%/8px 8px no-repeat}
+.face-back{background:#FFF3D4;border:1.5px solid #FFD678;color:#6B0B10;transform:rotateY(180deg);box-shadow:0 6px 14px rgba(90,0,6,.35)}
+.face-back::before{content:"";position:absolute;inset:4px;border:1px dashed #D99A3A;border-radius:9px;pointer-events:none}
+.cloud{position:absolute;bottom:0;width:min(30vw,420px);pointer-events:none}
+.overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;animation:fadeIn .25s ease-out both}
+.gift-card{position:relative;width:100%;max-width:360px;box-sizing:border-box;animation:cardIn .7s cubic-bezier(.2,.7,.2,1) both}
+.gift-card::before{inset:10px;border-color:#D99A3A;border-radius:18px}
+.gift-card::after{content:"";position:absolute;inset:6px;pointer-events:none;background:
+linear-gradient(#C4141B,#C4141B) 0 0/12px 12px no-repeat,
+linear-gradient(#C4141B,#C4141B) 100% 0/12px 12px no-repeat,
+linear-gradient(#C4141B,#C4141B) 0 100%/12px 12px no-repeat,
+linear-gradient(#C4141B,#C4141B) 100% 100%/12px 12px no-repeat}
+.quan-card{position:relative;width:100%;max-width:420px;box-sizing:border-box;padding:5px;border-radius:33px;background:linear-gradient(135deg,#FFF4C4 0%,#F2A93B 25%,#FFF1B8 50%,#D98A1B 75%,#FFF4C4 100%);animation:cardIn .8s cubic-bezier(.2,.7,.2,1) both,glow 2.2s ease-in-out .8s infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 6px #6B0B10,0 0 50px rgba(255,205,90,.7),0 30px 60px rgba(40,0,4,.6)}50%{box-shadow:0 0 0 6px #6B0B10,0 0 110px rgba(255,220,120,1),0 30px 60px rgba(40,0,4,.6)}}
+.rays{position:absolute;left:50%;top:170px;width:760px;height:760px;margin:-380px 0 0 -380px;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(255,224,138,.28) 0deg 7deg,rgba(255,224,138,0) 7deg 18deg);-webkit-mask-image:radial-gradient(circle,#000 18%,transparent 66%);mask-image:radial-gradient(circle,#000 18%,transparent 66%);animation:spin 26s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spark{position:absolute;width:14px;height:14px;background:#FFF4C4;transform:rotate(45deg);box-shadow:0 0 12px #FFE08A;animation:twinkle 1.8s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2;transform:rotate(45deg) scale(.5)}50%{opacity:1;transform:rotate(45deg) scale(1)}}
+.gold-text{color:#FFE08A;background:linear-gradient(180deg,#FFF8D6 0%,#FFD566 50%,#F2A93B 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 0 rgba(107,11,16,.8))}
+.cell-inner.is-past .face{box-shadow:none}
+.cell-inner.is-past .face-front{background:linear-gradient(180deg,#F4F1EA 0%,#E2DDD2 100%);border-color:#CFC8B8}
+.cell-inner.is-past .face-front::before{border-color:#CFC8B8}
+.cell-inner.is-past .face-front::after{display:none}
+.cell-inner.is-past .face span{color:#5E584E !important}
+.cell-inner.is-past .face-front img{filter:grayscale(1) opacity(.5) !important}
+.cell-inner.is-past .face-back{background:#F7F5F0;border-color:#CFC8B8}
+.cell-inner.is-past .face-back::before{border-color:#CFC8B8}
+.cell:has(.is-past):hover{transform:none}
+.cell:has(.is-today){transform:translateY(-6px) scale(1.07);z-index:2;position:relative}
+.cell-inner.is-today .face-front{background:linear-gradient(180deg,#FF6A2A 0%,#E0221C 100%);border-color:#FFF4C4;animation:todayGlow 1.6s ease-in-out infinite}
+@keyframes todayGlow{0%,100%{box-shadow:0 0 0 3px #FFF4C4,0 0 18px 2px rgba(255,224,138,.7)}50%{box-shadow:0 0 0 3px #FFF4C4,0 0 38px 10px rgba(255,236,170,1)}}
+.quan.is-past{filter:grayscale(1) brightness(1.2) opacity(.85)}
+.quan.is-today{animation:todayGlow 1.6s ease-in-out infinite}
+.gift-card.is-past>div:first-child{background:#9A9388 !important}
+.gift-card.is-past>img{filter:grayscale(1) opacity(.55) !important}
+.quan-card.is-past{filter:saturate(.35) brightness(1.1)}
+.face-back{padding:30px 10px 10px}
+.bdate{position:absolute;top:14px;left:0;right:0;text-align:center}
+.bgift{letter-spacing:-.01em}
+.fs22{font-size:18px}.fs20{font-size:16px}.fs17{font-size:14px}.fs16{font-size:14px}
+@media(min-width:1024px) and (max-width:1359px){.fs22{font-size:15px}.fs20{font-size:14px}.fs17{font-size:12px}.fs16{font-size:12px}}
+.plain{background:none;border:0;font-family:inherit;cursor:pointer}
+@media(max-width:1023px){
+.wrap{padding:0 12px}
+.topbar{padding-top:12px !important}
+.topbar button,.topbar a{padding:0 12px !important;font-size:14px !important;min-height:44px}
+.board-main{justify-content:flex-start !important;gap:18px !important;padding-top:8px !important;padding-bottom:16px !important}
+.board-main h1{font-size:26px !important}
+.board-main p{font-size:14px !important}
+.board-frame{border-radius:56px;padding:14px}
+.board{gap:12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"q25 q25" "a b" "q12 q12"}
+.row{grid-template-columns:minmax(0,1fr);gap:10px;align-content:start}
+.row-b{display:flex;flex-direction:column-reverse}
+.cell{height:44px;border-radius:10px}
+.cell:hover{transform:none}
+.cell:has(.is-today){transform:scale(1.03)}
+.face{flex-direction:row;gap:8px;padding:4px 10px;border-radius:10px}
+.face span{white-space:nowrap}
+.bgift{white-space:normal !important}
+.face-front::before{inset:4px;border-radius:6px}
+.face-front::after{display:none}
+.face-front img{width:24px !important;height:24px !important}
+.face-front span:nth-of-type(1){font-size:16px !important}
+.face-front span:nth-of-type(2){font-size:11px !important}
+.face-back{padding:4px 14px;justify-content:space-between}
+.face-back::before{inset:3px;border-radius:7px}
+.bdate{position:static;font-size:11px !important;flex:0 0 auto;text-align:left}
+.bgift{font-size:13px !important;text-align:right !important;flex:1 1 auto;min-width:0}
+.quan{min-height:72px;padding:10px 20px;gap:14px}
+.quan>span{gap:5px !important}
+.quan img{width:40px !important;height:40px !important}
+.quan-pts{font-size:28px}
+.quan-l{border-radius:39px 39px 14px 14px}
+.quan-r{border-radius:14px 14px 39px 39px}
+.cloud{width:150px}
+.play{min-height:60px;padding:0 36px;font-size:21px}
+.gold-text{font-size:34px !important}
+}
+@media(prefers-reduced-motion:reduce){.cell-inner,.cell,.quan{transition:none}.play,.screen-in,.overlay,.gift-card,.quan-card,.rays,.spark,.cell-inner.is-today .face-front,.quan.is-today{animation:none}}
+
+.if{display:contents}.if[hidden]{display:none}
+</style>
+</head>
+<body>
+<div style="position: relative; width: 100%; min-height: 100vh; font-family: 'Inter', system-ui, sans-serif; color: #3D0A0D; background: #D3121A; line-height: 1.5">
+
+<div class="if" data-if="isKv" hidden>
+<section aria-label="Màn hình mở đầu Ô Ăn Quà" style="position: relative; height: 100vh; min-height: 480px; overflow: hidden">
+<img class="kv-img" src="assets/kv.jpg" alt="Ô Ăn Quà của SSI: bàn tay rải đồng xu vào bàn ô ăn quan chứa quà, Ô Quan 100.000 điểm">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(180deg, rgba(120, 0, 8, 0) 0%, rgba(120, 0, 8, 0.6) 100%)"></div>
+<div style="position: absolute; top: 18px; right: 24px">
+<button class="plain" data-on="openRules" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #FFD678; background: #B90F17; color: #FFF1D0; font-weight: 700; font-size: 15px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"></path><path d="M12 17h.01"></path></svg>
+Thể lệ
+</button>
+</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 7%; display: flex; justify-content: center; padding: 0 20px">
+<button class="btn btn-gold play" data-on="play">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l13-7.5a1 1 0 0 0 0-1.72l-13-7.5A1 1 0 0 0 7 4.5z"></path></svg>
+Chơi ngay
+</button>
+</div>
+</section>
+</div>
+
+<div class="if" data-if="isBoard" hidden>
+<section class="screen-in" aria-label="Bàn Ô Ăn Quà" style="position: relative; overflow: hidden; min-height: 100vh; display: flex; flex-direction: column; background: linear-gradient(180deg, #D3121A 0%, #EC3A1E 60%, #F4581F 100%); color: #FFF4DC">
+<img class="cloud" src="assets/cloud.webp" alt="" aria-hidden="true" style="left: 0">
+<img class="cloud" src="assets/cloud.webp" alt="" aria-hidden="true" style="right: 0; transform: scaleX(-1)">
+
+<div class="wrap topbar" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; padding-bottom: 6px">
+<button class="plain" data-on="back" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #FFD678; background: #B90F17; color: #FFF1D0; font-weight: 700; font-size: 15px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg>
+Quay lại
+</button>
+<div style="display: flex; gap: 10px; align-items: center">
+<button class="plain" data-on="openRules" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid #FFD678; background: #B90F17; color: #FFF1D0; font-weight: 700; font-size: 15px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"></path><path d="M12 17h.01"></path></svg>
+Thể lệ
+</button>
+<a class="btn btn-gold" href="https://www.ssi.com.vn" style="min-height: 44px; padding: 0 20px; font-size: 15px; box-shadow: none">Mở tài khoản</a>
+</div>
+</div>
+
+<div class="wrap board-main" style="position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; gap: 26px; padding-top: 16px; padding-bottom: 110px">
+<div style="display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center">
+<h1 style="margin: 0; font-size: clamp(26px, 3.2vw, 42px); line-height: 1.15; font-weight: 700; color: #FFFFFF">Lật ô để mở quà!</h1>
+<p style="margin: 0; font-size: 16px; color: #FFF1D0">Chinh phục thử thách, quà trong ô sẽ thuộc về bạn</p>
+</div>
+
+<div class="board-frame" style="background: linear-gradient(135deg, #F0401F 0%, #D5181B 100%); border: 3px solid #FFD678; box-shadow: inset 0 0 0 6px #D5181B, inset 0 0 0 7.5px rgba(255, 214, 120, 0.85), 0 30px 60px rgba(90, 0, 6, 0.45)">
+<div class="board">
+<div class="row" id="rowA" style="grid-area: a">
+</div>
+
+<button class="quan quan-r" data-cls="q12Cls" data-on="pickQ12" aria-label="Ô Quan 12/12: quà tới 100.000 điểm, chạm để xem" style="grid-area: q12; border: 2px solid #FFE9A8; background: linear-gradient(160deg, #FFD566 0%, #F88F1F 100%); box-shadow: inset 0 0 0 5px rgba(255, 241, 208, 0.35), 0 8px 18px rgba(90, 0, 6, 0.35); color: #6B0B10; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center">
+<img src="assets/coin.png" alt="" aria-hidden="true" style="width: 64px; height: 64px; filter: drop-shadow(0 4px 5px rgba(120, 40, 0, 0.45))">
+<span style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<span style="font-size: 13px; font-weight: 800; letter-spacing: 0.14em">Ô QUAN</span>
+<span class="quan-pts" style="font-weight: 900; line-height: 1">12/12</span>
+</span>
+</button>
+
+<div class="row row-b" id="rowB" style="grid-area: b">
+</div>
+
+<button class="quan quan-l" data-cls="q25Cls" data-on="pickQ25" aria-label="Ô Quan 25/12: quà tới 100.000 điểm, chạm để xem" style="grid-area: q25; border: 2px solid #FFE9A8; background: linear-gradient(200deg, #FFD566 0%, #F88F1F 100%); box-shadow: inset 0 0 0 5px rgba(255, 241, 208, 0.35), 0 8px 18px rgba(90, 0, 6, 0.35); color: #6B0B10; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center">
+<img src="assets/coin.png" alt="" aria-hidden="true" style="width: 64px; height: 64px; filter: drop-shadow(0 4px 5px rgba(120, 40, 0, 0.45))">
+<span style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<span style="font-size: 13px; font-weight: 800; letter-spacing: 0.14em">Ô QUAN</span>
+<span class="quan-pts" style="font-weight: 900; line-height: 1">25/12</span>
+</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<div class="if" data-if="hasCard" hidden>
+<div class="overlay" role="dialog" aria-modal="true" aria-label="Lá bài quà">
+<button class="plain" data-on="closeCard" aria-label="Đóng lá bài" style="position: absolute; inset: 0; width: 100%; height: 100%; background: rgba(70, 0, 5, 0.78)"></button>
+<div class="if" data-if="isDayCard" hidden>
+<div class="gift-card" data-cls="card.cardCls" style="background: linear-gradient(180deg, #FFF8E4 0%, #FFEBC0 100%); border: 3px solid #FFD678; border-radius: 28px; padding: 36px 30px 28px; box-shadow: 0 0 0 6px #C4141B, 0 0 60px rgba(255, 214, 120, 0.75), 0 30px 60px rgba(40, 0, 4, 0.6); display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center">
+<div style="padding: 6px 18px; border-radius: 999px; background: #C4141B; color: #FFF1D0; font-size: 14px; font-weight: 800"><span data-bind="card.when"></span></div>
+<img src="assets/coin.png" alt="" aria-hidden="true" style="width: 96px; height: 96px; filter: drop-shadow(0 6px 8px rgba(160, 80, 0, 0.45))">
+<div style="font-size: 13px; font-weight: 800; color: #A8650E; letter-spacing: 0.12em">QUÀ TRONG Ô</div>
+<div style="font-size: 26px; font-weight: 900; color: #6B0B10; line-height: 1.2"><span data-bind="card.gift"></span></div>
+<div aria-hidden="true" style="width: 100%; border-top: 1.5px dashed #D99A3A"></div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 13px; font-weight: 800; color: #C4141B; letter-spacing: 0.08em">THỬ THÁCH</div>
+<div style="font-size: 16px; font-weight: 600; color: #3D0A0D"><span data-bind="card.cond"></span></div>
+</div>
+<div class="if" data-if="card.canPlay" hidden>
+<a class="btn btn-red" href="https://www.ssi.com.vn" style="align-self: stretch; margin-top: 6px">Làm thử thách</a>
+</div>
+<div class="if" data-if="card.isPast" hidden>
+<div style="align-self: stretch; padding: 12px 14px; border-radius: 14px; background: #E4DFD3; color: #3F3F3F; font-size: 14px; font-weight: 700">Ngày này đã qua. Bạn chỉ xem được quà, không thể làm thử thách nữa.</div>
+</div>
+<div class="if" data-if="card.isFuture" hidden>
+<div style="align-self: stretch; padding: 12px 14px; border-radius: 14px; background: #FFE2A6; color: #6B0B10; font-size: 14px; font-weight: 700"><span data-bind="card.lockNote"></span></div>
+</div>
+<div style="font-size: 15px; font-weight: 600; color: #3D0A0D; min-height: 28px">Chưa có tài khoản? <a href="https://www.ssi.com.vn" style="color: #D5181B; font-size: 16px; font-weight: 900; text-decoration: underline">Mở để chơi</a></div>
+</div>
+</div>
+<div class="if" data-if="isQuanCard" hidden>
+<div class="quan-card" data-cls="card.cardCls">
+<div style="position: relative; overflow: hidden; border-radius: 28px; background: radial-gradient(circle at 50% 30%, #FF7A2E 0%, #E0221C 40%, #8E0B12 100%); padding: 30px 28px 26px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; color: #FFF1D0">
+<div class="rays" aria-hidden="true"></div>
+<span class="spark" aria-hidden="true" style="top: 46px; left: 40px"></span>
+<span class="spark" aria-hidden="true" style="top: 120px; right: 34px; animation-delay: .5s"></span>
+<span class="spark" aria-hidden="true" style="top: 250px; left: 30px; animation-delay: .9s; width: 10px; height: 10px"></span>
+<span class="spark" aria-hidden="true" style="top: 300px; right: 46px; animation-delay: 1.3s; width: 10px; height: 10px"></span>
+<div style="position: relative; padding: 6px 22px; border-radius: 999px; background: linear-gradient(180deg, #FFE9A8 0%, #F2A93B 100%); color: #6B0B10; font-size: 14px; font-weight: 900; letter-spacing: 0.18em; box-shadow: 0 3px 0 #A8650E">Ô QUAN</div>
+<div style="position: relative; font-size: 72px; font-weight: 900; line-height: 1; color: #FFFFFF; text-shadow: 0 4px 0 #8E0B12, 0 0 28px rgba(255, 224, 138, 0.9)"><span data-bind="card.date"></span></div>
+<div aria-hidden="true" style="position: relative; display: flex; align-items: flex-end; justify-content: center">
+<img src="assets/coin.png" alt="" style="width: 62px; height: 62px; margin-right: -18px; transform: rotate(-14deg); filter: drop-shadow(0 6px 8px rgba(60, 0, 4, 0.5))">
+<img src="assets/coin.png" alt="" style="position: relative; z-index: 1; width: 104px; height: 104px; filter: drop-shadow(0 8px 12px rgba(60, 0, 4, 0.55))">
+<img src="assets/coin.png" alt="" style="width: 62px; height: 62px; margin-left: -18px; transform: rotate(14deg); filter: drop-shadow(0 6px 8px rgba(60, 0, 4, 0.5))">
+</div>
+<div style="position: relative; font-size: 30px; font-weight: 900; line-height: 1.1; color: #FFFFFF; text-shadow: 0 3px 0 #8E0B12">Ăn ô quan!</div>
+<div style="position: relative; font-size: 17px; font-weight: 700; color: #FFF1D0">Mở kho quà tới</div>
+<div class="gold-text" style="position: relative; font-size: 42px; font-weight: 900; line-height: 1.05">100.000.000đ</div>
+<div class="if" data-if="card.canPlay" hidden>
+<a class="btn btn-gold" href="https://www.ssi.com.vn" style="position: relative; align-self: stretch; margin-top: 6px">Đổi quà ngay</a>
+</div>
+<div class="if" data-if="card.isPast" hidden>
+<div style="position: relative; align-self: stretch; padding: 12px 14px; border-radius: 14px; background: rgba(40, 0, 4, 0.55); color: #FFF1D0; font-size: 14px; font-weight: 700">Ô Quan này đã qua ngày, không thể đổi quà nữa.</div>
+</div>
+<div class="if" data-if="card.isFuture" hidden>
+<div style="position: relative; align-self: stretch; padding: 12px 14px; border-radius: 14px; background: rgba(40, 0, 4, 0.55); color: #FFE08A; font-size: 14px; font-weight: 700"><span data-bind="card.lockNote"></span></div>
+</div>
+<div style="position: relative; font-size: 15px; font-weight: 600; color: #FFF1D0; min-height: 28px">Chưa có tài khoản? <a href="https://www.ssi.com.vn" style="color: #FFE08A; font-weight: 800; text-decoration: underline">Mở để chơi</a></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="if" data-if="hasRules" hidden>
+<div class="overlay" role="dialog" aria-modal="true" aria-label="Thể lệ chương trình">
+<button class="plain" data-on="closeRules" aria-label="Đóng thể lệ" style="position: absolute; inset: 0; width: 100%; height: 100%; background: rgba(70, 0, 5, 0.78)"></button>
+<div style="position: relative; width: 100%; max-width: 600px; max-height: 88vh; overflow-y: auto; box-sizing: border-box; background: linear-gradient(180deg, #FFF8E4 0%, #FFEBC0 100%); border: 3px solid #FFD678; border-radius: 28px; padding: 32px 30px 26px; box-shadow: 0 0 0 6px #C4141B, 0 30px 60px rgba(40, 0, 4, 0.6); display: flex; flex-direction: column; gap: 18px">
+<h2 style="margin: 0; font-size: 28px; font-weight: 900; color: #6B0B10; text-align: center">Thể lệ Ô Ăn Quà</h2>
+<ol style="margin: 0; padding: 0 0 0 22px; display: flex; flex-direction: column; gap: 10px; font-size: 16px; color: #3D0A0D">
+<li><span style="font-weight: 800; color: #6B0B10">Thời gian:</span> từ 1/12 đến 25/12/2026.</li>
+<li><span style="font-weight: 800; color: #6B0B10">Mỗi ngày một ô:</span> hoàn thành thử thách của ngày để lật ô và nhận quà trong ô.</li>
+<li><span style="font-weight: 800; color: #6B0B10">Bàn chơi:</span> 18 ô quà và 2 Ô Quan. Thứ Bảy, Chủ nhật không có ô, trừ Ô Quan ngày 12/12.</li>
+<li><span style="font-weight: 800; color: #6B0B10">Ô Quan 12/12 và 25/12:</span> điểm từ các thử thách được cộng dồn, vào Ô Quan để đổi quà giá trị tới 100.000 điểm.</li>
+<li><span style="font-weight: 800; color: #6B0B10">Đối tượng:</span> [ĐỐI TƯỢNG ÁP DỤNG]</li>
+<li><span style="font-weight: 800; color: #6B0B10">Ô đã qua ngày:</span> chuyển xám, chỉ xem được quà, không thể làm thử thách nữa. Ô của ngày hôm nay sẽ sáng lên.</li>
+<li><span style="font-weight: 800; color: #6B0B10">Trả quà:</span> [THỜI GIAN VÀ CÁCH THỨC TRẢ QUÀ]</li>
+</ol>
+<div style="font-size: 13px; color: #5A3A3C">[ĐIỀU KHOẢN CHƯƠNG TRÌNH VÀ CẢNH BÁO RỦI RO ĐẦU TƯ THEO QUY ĐỊNH]</div>
+<button class="btn btn-red" data-on="closeRules" style="align-self: center; min-width: 200px">Đã hiểu</button>
+</div>
+</div>
+</div>
+
+</div>
+<script>
+class DCLogic{setState(u){const p=typeof u==='function'?u(this.state):u;this.state=Object.assign({},this.state,p);update();}}
+
+class Component extends DCLogic {
+state = { screen: 'kv', open: {}, card: null, rules: false };
+componentWillUnmount() {
+clearTimeout(this.timer);
+}
+renderVals() {
+const DOW = { 1: 'Thứ 3', 2: 'Thứ 4', 3: 'Thứ 5', 4: 'Thứ 6', 7: 'Thứ 2', 8: 'Thứ 3', 9: 'Thứ 4', 10: 'Thứ 5', 11: 'Thứ 6', 14: 'Thứ 2', 15: 'Thứ 3', 16: 'Thứ 4', 17: 'Thứ 5', 18: 'Thứ 6', 21: 'Thứ 2', 22: 'Thứ 3', 23: 'Thứ 4', 24: 'Thứ 5' };
+const DATA = [
+[1, '01 CTG', '1 cổ phiếu CTG', 'Giao dịch cổ phiếu từ 1.000.000đ'],
+[2, '02 MBB', '2 cổ phiếu MBB', 'Giao dịch cổ phiếu từ 2.000.000đ'],
+[3, '03 SSI', '3 cổ phiếu SSI', 'Giao dịch cổ phiếu từ 3.000.000đ'],
+[4, '05 PAN', '5 cổ phiếu PAN', 'Giao dịch cổ phiếu từ 5.000.000đ'],
+[7, '50.000Đ', '50.000đ chứng chỉ quỹ VLGF', 'Giao dịch chứng chỉ quỹ từ 2.000.000đ'],
+[8, '50.000Đ', '50.000đ chứng chỉ quỹ SCA', 'Giao dịch chứng chỉ quỹ từ 4.000.000đ'],
+[9, '50.000Đ', '50.000đ chứng chỉ quỹ EF', 'Giao dịch chứng chỉ quỹ từ 6.000.000đ'],
+[10, '50.000Đ', '50.000đ chứng chỉ quỹ PDF', 'Giao dịch chứng chỉ quỹ từ 8.000.000đ'],
+[11, '100.000Đ', '100.000 điểm', 'eSIP từ 10.000.000đ'],
+[14, '01 CTG', '1 cổ phiếu CTG', 'Giao dịch cổ phiếu từ 2.000.000đ'],
+[15, '02 MBB', '2 cổ phiếu MBB', 'Giao dịch cổ phiếu từ 4.000.000đ'],
+[16, '03 SSI', '3 cổ phiếu SSI', 'Giao dịch cổ phiếu từ 6.000.000đ'],
+[17, '05 PAN', '5 cổ phiếu PAN', 'Giao dịch cổ phiếu từ 8.000.000đ'],
+[18, 'Cà phê Starbucks', '1 cốc cà phê Starbucks', 'Giao dịch cổ phiếu từ 10.000.000đ'],
+[21, '0,5% lãi margin', '0,5% ưu đãi lãi suất margin trong 1 tháng', 'Phát sinh dư nợ margin từ 10.000.000đ'],
+[22, '20.000Đ phí', '20.000đ phí giao dịch phái sinh', 'Mở 1 vị thế phái sinh'],
+[23, '10 chứng quyền', '10 chứng quyền', 'Giao dịch chứng quyền từ 2.000.000đ'],
+[24, 'AI Gemini Plus', 'Gói AI Gemini Plus trị giá 132.000đ', 'eSIP cổ phiếu 10.000.000đ']
+];
+const QUAN = {
+q12: { when: 'Ô Quan 12/12', date: '12/12', gift: 'Đổi quà tới 100.000 điểm', cond: 'Cộng dồn điểm từ các thử thách, vào Ô Quan để đổi quà' },
+q25: { when: 'Ô Quan 25/12', date: '25/12', gift: 'Đổi quà tới 100.000 điểm', cond: 'Cộng dồn điểm từ các thử thách, vào Ô Quan để đổi quà' }
+};
+const s = this.state;
+const demo = this.props.demoDay ?? 3;
+let today = demo;
+if (!demo) {
+const t = new Date(Date.now() + 7 * 3600000);
+const y = t.getUTCFullYear(), m = t.getUTCMonth();
+today = (y === 2026 && m === 11) ? t.getUTCDate() : ((y < 2026 || (y === 2026 && m < 11)) ? 0 : 99);
+}
+const st = (day, label) => {
+const past = day < today, now = day === today;
+return { isPast: past, canPlay: now, isFuture: !past && !now, cardCls: past ? 'is-past' : '', stCls: past ? 'is-past' : (now ? 'is-today' : ''), lockNote: label + ' mở vào ngày ' + day + '/12' };
+};
+const cells = DATA.map((d) => {
+const id = 'd' + d[0];
+const z = st(d[0], 'Thử thách');
+const open = z.isPast || !!s.open[id];
+const date = d[0] + '/12';
+return Object.assign({}, z, {
+id: id, date: date, fsCls: (function (w) { return w <= 6 ? 'fs22' : (w === 7 ? 'fs20' : (w === 8 ? 'fs17' : 'fs16')); })(Math.max.apply(null, d[1].split(' ').map(function (x) { return x.length; }))), dow: z.canPlay ? 'Hôm nay' : DOW[d[0]], short: d[1], gift: d[2], cond: d[3],
+cls: (open ? 'is-open' : '') + ' ' + z.stCls,
+aria: open ? ('Ô ' + date + ': ' + d[2] + '. Chạm để xem lại lá bài') : ('Ô ' + date + ', chạm để lật quà'),
+when: date,
+flip: () => {
+clearTimeout(this.timer);
+if (z.isPast || this.state.open[id]) { this.setState({ card: id }); return; }
+this.setState((p) => { const o = Object.assign({}, p.open); o[id] = true; return { open: o }; });
+this.timer = setTimeout(() => this.setState({ card: id }), 520);
+}
+});
+});
+let card = null;
+if (s.card && QUAN[s.card]) card = Object.assign({}, QUAN[s.card], st(s.card === 'q12' ? 12 : 25, 'Ô Quan'));
+else if (s.card) card = cells.find((c) => c.id === s.card) || null;
+return {
+isKv: s.screen === 'kv',
+isBoard: s.screen === 'board',
+play: () => this.setState({ screen: 'board' }),
+back: () => { clearTimeout(this.timer); this.setState({ screen: 'kv', card: null }); },
+rowA: cells.slice(0, 9),
+rowB: cells.slice(9),
+hasCard: !!card && s.screen === 'board',
+card: card || { when: '', gift: '', cond: '', date: '', canPlay: false, isPast: false, isFuture: false, cardCls: '', lockNote: '' },
+q12Cls: st(12, '').stCls,
+q25Cls: st(25, '').stCls,
+isQuanCard: !!card && !!QUAN[s.card],
+isDayCard: !!card && !QUAN[s.card],
+closeCard: () => this.setState((p) => {
+const o = Object.assign({}, p.open);
+const c = cells.find((x) => x.id === p.card);
+if (c && c.isFuture) delete o[p.card];
+return { card: null, open: o };
+}),
+hasRules: !!s.rules,
+openRules: () => this.setState({ rules: true, card: null }),
+closeRules: () => this.setState({ rules: false }),
+pickQ12: () => { clearTimeout(this.timer); this.setState({ card: 'q12' }); },
+pickQ25: () => { clearTimeout(this.timer); this.setState({ card: 'q25' }); }
+};
+}
+}
+
+const app=new Component();
+const q=new URLSearchParams(location.search);
+app.props={demoDay:parseInt(q.get('day'),10)||0};
+const CELL='<button class="cell" data-cell="{{c.id}}" aria-label="{{c.aria}}">\n<span class="cell-inner {{c.cls}}">\n<span class="face face-front">\n<img src="assets/coin.png" alt="" aria-hidden="true" style="width: 50px; height: 50px; filter: drop-shadow(0 3px 4px rgba(90, 0, 6, 0.45))">\n<span style="font-size: 22px; font-weight: 900; line-height: 1; color: #FFFFFF">{{c.date}}</span>\n<span style="font-size: 12px; font-weight: 600; color: #FFE9B8">{{c.dow}}</span>\n</span>\n<span class="face face-back">\n<span class="bdate" style="font-size: 12px; font-weight: 400; color: #C4141B">{{c.date}}</span>\n<span class="bgift {{c.fsCls}}" style="font-weight: 700; line-height: 1.15; text-align: center">{{c.short}}</span>\n</span>\n</span>\n</button>';
+const get=(o,p)=>p.split('.').reduce((a,k)=>a==null?a:a[k],o);
+const esc=(t)=>String(t).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let vals=null,built=false;
+function update(){
+vals=app.renderVals();
+const all=vals.rowA.concat(vals.rowB);
+if(!built){
+for(const [id,list] of [['rowA',vals.rowA],['rowB',vals.rowB]]){
+document.getElementById(id).innerHTML=list.map((c)=>CELL.replace(/\{\{c\.(\w+)\}\}/g,(m,k)=>esc(c[k]))).join('\n');
+}
+built=true;
+}
+for(const c of all){
+const b=document.querySelector('[data-cell="'+c.id+'"]');
+b.setAttribute('aria-label',c.aria);
+b.querySelector('.cell-inner').className='cell-inner '+c.cls;
+}
+document.querySelectorAll('[data-if]').forEach((e)=>{const on=!!get(vals,e.dataset.if);if(e.hidden===on)e.hidden=!on;});
+document.querySelectorAll('[data-bind]').forEach((e)=>{const t=String(get(vals,e.dataset.bind)??'');if(e.textContent!==t)e.textContent=t;});
+document.querySelectorAll('[data-cls]').forEach((e)=>{if(!e.dataset.base)e.dataset.base=e.className;const n=(e.dataset.base+' '+(get(vals,e.dataset.cls)||'')).trim();if(e.className!==n)e.className=n;});
+}
+document.addEventListener('click',(ev)=>{
+const cell=ev.target.closest('[data-cell]');
+if(cell){const c=vals.rowA.concat(vals.rowB).find((x)=>x.id===cell.dataset.cell);if(c)c.flip();return;}
+const on=ev.target.closest('[data-on]');
+if(on&&typeof vals[on.dataset.on]==='function')vals[on.dataset.on]();
+});
+document.addEventListener('keydown',(ev)=>{if(ev.key==='Escape'){if(vals.hasRules)vals.closeRules();else if(vals.hasCard)vals.closeCard();}});
+update();
+</script>
+</body>
+</html>
